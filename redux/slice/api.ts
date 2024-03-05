@@ -7,7 +7,7 @@ export const todosAPI = createApi({
   }),
   endpoints: (builder) => ({
     getTodosByTitle: builder.query({
-      query: () => `todos`,
+      query: ({start, limit} : {start: number, limit: number}) => `todos?_start=${start}&_limit=${limit}`,
     }),
   }),
 });
