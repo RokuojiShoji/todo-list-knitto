@@ -1,26 +1,24 @@
 import { todoData } from "./types";
 import getTodos from "../lib/getTodos";
-import dynamic from "next/dynamic";
 import PaginationControl from "./components/Pagination";
+import AddTodos from "./components/addTodos";
+import updateTodoCompleted from "@/lib/updateTodos";
+import CompletedButton from "./components/CompletedButton";
 
-const AddTodos = dynamic(() => import("./components/addTodos"), { ssr: false });
 
-
-export default async function Home({
+export default async function Todos({
   searchParams,
 }: {
-  searchParams: {[key: string]: string | string[] | undefined}
+  searchParams: { [key: string]: string | string[] | undefined };
 }) {
+  const page = searchParams["page"] ?? "1";
+  const limit = 10;
 
-  
-  const page = searchParams['page'] ?? '1'
-  const limit = 10
-  
-  const start = (Number(page) - 1) * Number(limit)
-  const end = start + Number(limit)
+  const start = (Number(page) - 1) * Number(limit);
+  const end = start + Number(limit);
 
   const data = await getTodos({ page: Number(page), limit: limit });
-  
+
   if (!data) {
     return <div>Loading...</div>;
   }
@@ -37,14 +35,12 @@ export default async function Home({
             >
               <div className=" py-2 px-3 join-item w-10/12">{item.title}</div>
               <div className=" flex-row-reverse w-2/12 m-0 rounded-md">
-                <button className="btn join-item h-full w-full shadow-none rounded-sm">
-                  Selesai
-                </button>
+                <CompletedButton id={item.id}/>
               </div>
             </div>
           ))}
         </div>
-       <PaginationControl hasNextPage={end < 200} hasPrevPage={start > 0} />
+        <PaginationControl hasNextPage={end < 200} hasPrevPage={start > 0} />
       </div>
     </main>
   );
